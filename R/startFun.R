@@ -72,7 +72,7 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
   
   if(.Platform$OS.type=="windows"){
     
-    r_portable_path <- normalizePath(file.path(electron_path, "R-Portable-Win", "bin"))
+    r_portable_path <- normalizePath(file.path(electron_path, "R-Portable-Win", "App", "R-Portable", "bin"))
   
     if(is.null(bioc_packages)){
       bioc_packages <- "NULL"
