@@ -7,17 +7,17 @@
 #' @import glue
 #' @export
 startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_packages=NULL){
-
+  
   message("Running Photon")
-
-  input_path <- normalizePath(input_path)
+  
+  input_path <- normalizePath(input_path, winslash = "/")
   electron_path <- normalizePath(
     file.path(
       input_path,
       "electron-quick-start"
-      )
-    )
-
+    ), winslash = "/"
+  )
+  
   #confirm versions greater than (node 8.4.0 and npm 5.3)
   nodeVersion <- system2('node', 
                          args='-v', 
@@ -53,7 +53,7 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
     electronPackagerVersion <- stringr::str_extract(electronPackagerVersion[2],
                                                     "[0-9]+\\.[0-9]+\\.[0-9]+")
   }
-    
+  
   #confirm git is installed and available
   gitVersion <- system2("git", args="--version", stdout=TRUE, stderr=TRUE)
   gitVersion <- stringr::str_extract(gitVersion, "[0-9]+\\.[0-9]+\\.[0-9]+")
@@ -68,12 +68,12 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
             wait=TRUE)
   }
   
-
+  
   
   if(.Platform$OS.type=="windows"){
     
-    r_portable_path <- normalizePath(file.path(electron_path, "R-Portable-Win", "App", "R-Portable", "bin"))
-  
+    r_portable_path <- normalizePath(file.path(electron_path, "R-Portable-Win", "App", "R-Portable", "bin"), winslash = "/")
+    
     if(is.null(bioc_packages)){
       bioc_packages <- "NULL"
     } 
@@ -106,8 +106,8 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
     
     
     
-    file.copy(normalizePath(file.path(input_app_dir, "app.R")), 
-                      electron_win_dir,
+    file.copy(normalizePath(file.path(input_app_dir, "app.R"), winslash = "/"), 
+              electron_win_dir,
               overwrite=TRUE)
     
     shell(sprintf("cd %s && npm install",
@@ -118,7 +118,7 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
     
     
   } else if(.Platform$OS.type=="unix") {
-    r_portable_path <- normalizePath(file.path(input_path, "R-Portable-Mac"))
+    r_portable_path <- normalizePath(file.path(input_path, "R-Portable-Mac"), winslash = "/")
     
     
     r_electron_version <- system(sprintf("cd %s; ./R CMD BATCH --version", 
@@ -156,7 +156,7 @@ startFun <- function(input_path, cran_packages=NULL, bioc_packages=NULL, github_
               sprintf("%s/electron-quick-start",
                       input_path),
               overwrite=TRUE)
-
+    
     system(sprintf("cd %s; npm install; npm run package-mac", 
                    r_portable_path))
   }
